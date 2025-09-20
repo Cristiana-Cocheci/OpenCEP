@@ -14,8 +14,7 @@ class FileInputStream(InputStream):
             for line in f.readlines():
                 self._stream.put(line)
         self.close()
-
-
+    
 class FileOutputStream(OutputStream):
     """
     Writes the objects into a predefined output file.
