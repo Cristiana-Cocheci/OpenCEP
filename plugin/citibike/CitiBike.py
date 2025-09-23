@@ -3,26 +3,28 @@ from datetime import datetime
 from base.DataFormatter import DataFormatter, EventTypeClassifier
 
 # CitiBike CSV column keys (based on typical CitiBike data format)
-CITIBIKE_RIDE_ID_KEY = "ride_id"
-CITIBIKE_RIDEABLE_KEY = "rideable_type"
-CITIBIKE_START_TIME_KEY = "started_at"
-CITIBIKE_END_TIME_KEY = "ended_at"
-CITIBIKE_START_STATION_NAME_KEY = "start_station_name"
-CITIBIKE_START_STATION_ID_KEY = "start_station_id"
-CITIBIKE_END_STATION_NAME_KEY = "end_station_name"
-CITIBIKE_END_STATION_ID_KEY = "end_station_id"
+CITIBIKE_TRIP_DURATION_KEY = "tripduration"
+CITIBIKE_START_TIME_KEY = "starttime"
+CITIBIKE_END_TIME_KEY = "stoptime"
+CITIBIKE_START_STATION_ID_KEY = "startstationid"
+CITIBIKE_START_STATION_NAME_KEY = "startstationname"
+CITIBIKE_END_STATION_ID_KEY = "endstationid"
+CITIBIKE_END_STATION_NAME_KEY = "endstationname"
+CITIBIKE_BIKE_ID_KEY = "bike_id"
+
+
 
 # Standard CitiBike CSV column order
 CITIBIKE_COLUMN_KEYS = [
-    CITIBIKE_RIDE_ID_KEY,
-    CITIBIKE_RIDEABLE_KEY,
+    CITIBIKE_TRIP_DURATION_KEY,
     CITIBIKE_START_TIME_KEY,
     CITIBIKE_END_TIME_KEY,
     CITIBIKE_START_STATION_ID_KEY,
     CITIBIKE_START_STATION_NAME_KEY,
     CITIBIKE_END_STATION_ID_KEY,
     CITIBIKE_END_STATION_NAME_KEY,
-]
+    CITIBIKE_BIKE_ID_KEY,
+    ]
 
 
 class CitiBikeStartStationEventTypeClassifier(EventTypeClassifier):
@@ -69,21 +71,30 @@ class CitiBikeDataFormatter(DataFormatter):
 
     def parse_event(self, raw_data: str):
         """
-        Expected format: ride_id,rideable_type,started_at,ended_at,start_station_name,start_station_id,end_station_name,end_station_id
-        Example: AABD1C039D2D622D,electric_bike,2025-08-18 09:02:16.100,2025-08-18 09:07:45.510,City Hall - Washington St & 1 St,HB105,14 St Ferry - 14 St & Shipyard Ln,HB202
+        Expected format: tripduration,starttime,stoptime,startstationid,startstationname,endstationid,endstationname,bikeid
+
+
+        Example: 320,2019-01-01 00:01:47.4010,2019-01-01 00:07:07.5810,3160.0,Central Park West & W 76 St,3283.0,W 89 St & Columbus Ave,15839
+
+
         """
         event_attributes = raw_data.replace("\n", "").replace("\r", "").split(",")
-        return dict(zip(CITIBIKE_COLUMN_KEYS, event_attributes))
+        if len(event_attributes) != len(CITIBIKE_COLUMN_KEYS):
+            raise ValueError(f"Malformed event: {raw_data} (expected {len(CITIBIKE_COLUMN_KEYS)} fields, got {len(event_attributes)})")
+
+        timestamp_format = "%Y-%m-%d %H:%M:%S.%f" 
+        event_payload=dict(zip(CITIBIKE_COLUMN_KEYS, event_attributes))
+        
+        try:
+            event_payload[CITIBIKE_START_TIME_KEY]=datetime.strptime(event_payload[CITIBIKE_START_TIME_KEY], timestamp_format)
+            event_payload[CITIBIKE_END_TIME_KEY]=datetime.strptime(event_payload[CITIBIKE_END_TIME_KEY], timestamp_format)
+            return event_payload
+        except ValueError:
+            raise ValueError(f"Unable to parse timestamp in event: {raw_data}")
 
     def get_event_timestamp(self, event_payload: dict):
         """
         The event timestamp uses the start time of the trip.
         """
-        timestamp_str = str(event_payload[CITIBIKE_START_TIME_KEY])
-        timestamp_format = "%Y-%m-%d %H:%M:%S.%f" 
-
-        try:
-            return datetime.strptime(timestamp_str, timestamp_format)
-        except ValueError:
-            raise ValueError(f"Unable to parse timestamp: {timestamp_str}")
+        return event_payload[CITIBIKE_START_TIME_KEY]
 
