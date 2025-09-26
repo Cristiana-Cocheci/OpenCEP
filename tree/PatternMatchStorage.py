@@ -4,6 +4,8 @@ from misc.Utils import get_first_index, get_last_index
 from datetime import datetime
 from misc.Utils import find_partial_match_by_timestamp
 from condition.Condition import RelopTypes, EquationSides
+import random
+import math
 
 
 class PatternMatchStorage:
@@ -94,6 +96,75 @@ class PatternMatchStorage:
         """
         return self._partial_matches
 
+    def apply_load_shedding(self, drop_percentage: float = 0.25, strategy: str = 'random'):
+        """
+        Applies load shedding by dropping a percentage of partial matches.
+        
+        Args:
+            drop_percentage: Percentage of matches to drop 
+            strategy: Load shedding strategy ('random', 'oldest', 'newest', 'lowest_priority')
+        """
+        print(f"Applying load shedding: {drop_percentage*100:.1f}% using '{strategy}' strategy")
+        if not (0.0 <= drop_percentage <= 1.0):
+            raise ValueError("Drop percentage must be between 0.0 and 1.0")
+        
+        current_count = len(self._partial_matches)
+        if current_count == 0:
+            return
+        
+        drop_count = math.floor(current_count * drop_percentage)
+        if drop_count == 0:
+            return
+        
+        if strategy == 'random':
+            self._apply_random_load_shedding(drop_count)
+        elif strategy == 'oldest':
+            self._apply_oldest_load_shedding(drop_count)
+        elif strategy == 'newest':
+            self._apply_newest_load_shedding(drop_count)
+        elif strategy == 'lowest_priority':
+            self._apply_priority_load_shedding(drop_count)
+        else:
+            raise ValueError(f"Unknown load shedding strategy: {strategy}")
+    
+    def _apply_random_load_shedding(self, drop_count: int):
+        """Randomly drops the specified number of matches."""
+        if drop_count >= len(self._partial_matches):
+            self._partial_matches.clear()
+            return
+        
+        indices_to_drop = random.sample(range(len(self._partial_matches)), drop_count)
+        # Sort in descending order to avoid index shifting when deleting
+        indices_to_drop.sort(reverse=True)
+        
+        for index in indices_to_drop:
+            del self._partial_matches[index]
+    
+    def _apply_oldest_load_shedding(self, drop_count: int):
+        """Drops the oldest matches (assumes sorted by timestamp)."""
+        if self._sorted_by_arrival_order:
+            # If sorted by arrival, oldest are at the beginning
+            self._partial_matches = self._partial_matches[drop_count:]
+        else:
+            # Find oldest matches by timestamp
+            sorted_matches = sorted(self._partial_matches, key=lambda pm: pm.first_timestamp)
+            matches_to_keep = sorted_matches[drop_count:]
+            self._partial_matches = [pm for pm in self._partial_matches if pm in matches_to_keep]
+    
+    def _apply_newest_load_shedding(self, drop_count: int):
+        """Drops the newest matches."""
+        if self._sorted_by_arrival_order:
+            # If sorted by arrival, newest are at the end
+            self._partial_matches = self._partial_matches[:-drop_count]
+        else:
+            # Find newest matches by timestamp
+            sorted_matches = sorted(self._partial_matches, key=lambda pm: pm.first_timestamp, reverse=True)
+            matches_to_drop = set(sorted_matches[:drop_count])
+            self._partial_matches = [pm for pm in self._partial_matches if pm not in matches_to_drop]
+    
+    def _apply_priority_load_shedding(self, drop_count: int):
+        raise NotImplementedError("Priority-based load shedding requires a priority function.")
+
     def add(self, pm: PatternMatch):
         """
         Adds a new pattern match to the storage.
@@ -112,9 +183,11 @@ class SortedPatternMatchStorage(PatternMatchStorage):
     This class stores the pattern matches sorted in increasing order according to a predefined function (key).
     """
     def __init__(self, get_match_key: callable, rel_op: RelopTypes, equation_side: EquationSides,
-                 clean_up_interval: int, sort_by_first_timestamp=False, in_leaf=False):
+                 clean_up_interval: int, storage_params, sort_by_first_timestamp=False, in_leaf=False):
         super().__init__(get_match_key, in_leaf and sort_by_first_timestamp, clean_up_interval)
         self.__get_function = self.__generate_get_function(rel_op, equation_side)
+        self._storage_params = storage_params
+        print(f"SortedPatternMatchStorage created with storage_params: {storage_params}")
 
     def __contains__(self, item):
         """
@@ -128,6 +201,18 @@ class SortedPatternMatchStorage(PatternMatchStorage):
         Efficiently inserts the new pattern match to the storage according to its key.
         """
         self._access_count += 1
+        print(f"SortedPatternMatchStorage.add() called Key: {self._get_key(pm)}, Total matches: {len(self._partial_matches)}")
+        print(f"Current events in pattern match: {[event for event in pm.events]}")
+        
+        # Check if load shedding should be applied
+        if (self._storage_params and 
+            self._storage_params.enable_load_shedding and
+            len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
+            self.apply_load_shedding(
+                self._storage_params.load_shedding_drop_rate,
+                self._storage_params.load_shedding_strategy
+            )
+        
         if self._sorted_by_arrival_order:
             # no need for artificially sorting
             self._partial_matches.append(pm)
@@ -254,14 +339,27 @@ class UnsortedPatternMatchStorage(PatternMatchStorage):
     This class stores pattern matches unsorted.
     It is used when it's difficult to specify an order that helps when receiving partial matches.
     """
-    def __init__(self, clean_up_interval: int):
+    def __init__(self, clean_up_interval: int, storage_params):
         super().__init__(lambda x: x, False, clean_up_interval)
+        self._storage_params = storage_params
+        print(f"UnsortedPatternMatchStorage created with storage_params: {storage_params}")
 
     def add(self, pm: PatternMatch):
         """
         Appends the given pattern match to the match buffer.
         """
         self._access_count += 1
+        print(f"UnsortedPatternMatchStorage.add() called! Total matches: {len(self._partial_matches)}")
+        
+        # Check if load shedding should be applied
+        if (self._storage_params and 
+            self._storage_params.enable_load_shedding and
+            len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
+            self.apply_load_shedding(
+                self._storage_params.load_shedding_drop_rate,
+                self._storage_params.load_shedding_strategy
+            )
+        
         self._partial_matches.append(pm)
 
     def get(self, value: int or float):
@@ -277,7 +375,9 @@ class TreeStorageParameters:
     """
     def __init__(self, sort_storage: bool = DefaultConfig.SHOULD_SORT_STORAGE, attributes_priorities: dict = None,
                  clean_up_interval: int = DefaultConfig.CLEANUP_INTERVAL,
-                 prioritize_sorting_by_timestamp: bool = DefaultConfig.PRIORITIZE_SORTING_BY_TIMESTAMP):
+                 prioritize_sorting_by_timestamp: bool = DefaultConfig.PRIORITIZE_SORTING_BY_TIMESTAMP,
+                 enable_load_shedding: bool = DefaultConfig.ENABLE_LOAD_SHEDDING, load_shedding_threshold: int = DefaultConfig.LOAD_SHEDDING_THRESHOLD,
+                 load_shedding_drop_rate: float = DefaultConfig.LOAD_SHEDDING_DROP_RATE, load_shedding_strategy: str = DefaultConfig.LOAD_SHEDDING_STRATEGY):
         if sort_storage is None:
             sort_storage = DefaultConfig.SHOULD_SORT_STORAGE
         if attributes_priorities is None:
@@ -296,3 +396,19 @@ class TreeStorageParameters:
         # The number of partial match additions after which a cleanup operation will be applied
         self.clean_up_interval = clean_up_interval
         self.prioritize_sorting_by_timestamp = prioritize_sorting_by_timestamp
+        
+        # Load shedding parameters
+        self.enable_load_shedding = enable_load_shedding
+        self.load_shedding_threshold = load_shedding_threshold  # Number of matches that triggers load shedding
+        self.load_shedding_drop_rate = load_shedding_drop_rate  # Percentage to drop (0.0 to 1.0)
+        self.load_shedding_strategy = load_shedding_strategy    # 'random', 'oldest', 'newest', 'lowest_priority'
+
+    def __str__(self):
+        return f"TreeStorageParameters(sort_storage={self.sort_storage}, "\
+               f"attributes_priorities={self.attributes_priorities}, " \
+               f"clean_up_interval={self.clean_up_interval}, "\
+               f"prioritize_sorting_by_timestamp={self.prioritize_sorting_by_timestamp}, "\
+               f"enable_load_shedding={self.enable_load_shedding}, "\
+               f"load_shedding_threshold={self.load_shedding_threshold}, "\
+               f"load_shedding_drop_rate={self.load_shedding_drop_rate}, "\
+               f"load_shedding_strategy={self.load_shedding_strategy})"

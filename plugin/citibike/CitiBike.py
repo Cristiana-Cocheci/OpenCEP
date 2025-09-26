@@ -97,4 +97,3 @@ class CitiBikeDataFormatter(DataFormatter):
         The event timestamp uses the start time of the trip.
         """
         return event_payload[CITIBIKE_START_TIME_KEY]
-

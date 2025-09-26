@@ -14,7 +14,8 @@ class DataParallelExecutionAlgorithmFactory:
     def create_data_parallel_algorithm(data_parallel_params: DataParallelExecutionParameters,
                                        patterns: Pattern or List[Pattern],
                                        eval_mechanism_params: EvaluationMechanismParameters,
-                                       platform: ParallelExecutionPlatform):
+                                       platform: ParallelExecutionPlatform,
+                                       storage_params):
         if data_parallel_params.algorithm == DataParallelExecutionModes.GROUP_BY_KEY_ALGORITHM:
             return GroupByKeyParallelExecutionAlgorithm(data_parallel_params.units_number,
                                                         patterns, eval_mechanism_params,

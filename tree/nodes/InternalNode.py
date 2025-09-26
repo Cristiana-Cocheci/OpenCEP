@@ -45,6 +45,12 @@ class InternalNode(Node, ABC):
         for parent in self._parents:
             self._parent_to_info_dict[parent] = self.get_positive_event_definitions()
 
+    def create_storage_unit(self, storage_params: TreeStorageParameters, sorting_key: callable = None,
+                           rel_op: RelopTypes = None, equation_side: EquationSides = None,
+                           sort_by_first_timestamp: bool = False):
+        print(f"InternalNode.create_storage_unit called with storage_params: {storage_params}")
+        self._init_storage_unit(storage_params, sorting_key, rel_op, equation_side, sort_by_first_timestamp)
+    
     def _init_storage_unit(self, storage_params: TreeStorageParameters, sorting_key: callable = None,
                            rel_op: RelopTypes = None, equation_side: EquationSides = None,
                            sort_by_first_timestamp: bool = False):
@@ -52,11 +58,13 @@ class InternalNode(Node, ABC):
         An auxiliary method for setting up the storage of an internal node.
         In the internal nodes, we only sort the storage if a storage key is explicitly provided by the user.
         """
+        print(f"InternalNode creating storage: sort={storage_params.sort_storage}, sorting_key={sorting_key}")
         if not storage_params.sort_storage or sorting_key is None:
-            self._partial_matches = UnsortedPatternMatchStorage(storage_params.clean_up_interval)
+            self._partial_matches = UnsortedPatternMatchStorage(storage_params.clean_up_interval, storage_params)
         else:
             self._partial_matches = SortedPatternMatchStorage(sorting_key, rel_op, equation_side,
-                                                              storage_params.clean_up_interval, sort_by_first_timestamp)
+                                                              storage_params.clean_up_interval, storage_params,
+                                                              sort_by_first_timestamp, False)
 
     def handle_new_partial_match(self, partial_match_source: Node):
         """

@@ -12,6 +12,7 @@ from typing import List
 from datetime import datetime
 from transformation.PatternPreprocessingParameters import PatternPreprocessingParameters
 from transformation.PatternPreprocessor import PatternPreprocessor
+from tree.PatternMatchStorage import TreeStorageParameters
 
 
 class CEP:
@@ -22,14 +23,22 @@ class CEP:
     """
     def __init__(self, patterns: Pattern or List[Pattern], eval_mechanism_params: EvaluationMechanismParameters = None,
                  parallel_execution_params: ParallelExecutionParameters = None,
-                 pattern_preprocessing_params: PatternPreprocessingParameters = None):
+                 pattern_preprocessing_params: PatternPreprocessingParameters = None,
+                 storage_params: TreeStorageParameters = None):
         """
         Constructor of the class.
         """
         actual_patterns = PatternPreprocessor(pattern_preprocessing_params).transform_patterns(patterns)
         self.__evaluation_manager = EvaluationManagerFactory.create_evaluation_manager(actual_patterns,
                                                                                        eval_mechanism_params,
-                                                                                       parallel_execution_params)
+                                                                                       parallel_execution_params,
+                                                                                       storage_params)
+        print("Initialized CEP with the following parameters:")
+        print(f" - Patterns: {actual_patterns}")
+        print(f" - Evaluation Mechanism: {eval_mechanism_params}")
+        print(f" - Parallel Execution: {parallel_execution_params}")
+        print(f" - Pattern Preprocessing: {pattern_preprocessing_params}")
+        print(f" - Storage: {storage_params}")
 
     def run(self, events: InputStream, matches: OutputStream, data_formatter: DataFormatter):
         """

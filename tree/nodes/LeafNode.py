@@ -85,6 +85,7 @@ class LeafNode(Node):
     def create_storage_unit(self, storage_params: TreeStorageParameters, sorting_key: callable = None,
                             rel_op: RelopTypes = None, equation_side: EquationSides = None,
                             sort_by_first_timestamp: bool = False):
+        print(f"LeafNode.create_storage_unit called with storage_params: {storage_params}")
         """
         For leaf nodes, we always want to create a sorted storage, since the events arrive in their natural order
         of occurrence anyway. Hence, a sorted storage is initialized either according to a user-specified key, or an
@@ -93,9 +94,10 @@ class LeafNode(Node):
         should_use_default_storage_mode = not storage_params.sort_storage or sorting_key is None
         actual_sorting_key = (lambda pm: pm.events[0].timestamp) if should_use_default_storage_mode else sorting_key
         actual_sort_by_first_timestamp = should_use_default_storage_mode or sort_by_first_timestamp
+        print(f"LeafNode creating SortedPatternMatchStorage with storage_params: {storage_params}")
         self._partial_matches = SortedPatternMatchStorage(actual_sorting_key, rel_op, equation_side,
                                                           storage_params.clean_up_interval,
-                                                          actual_sort_by_first_timestamp, True)
+                                                          storage_params, actual_sort_by_first_timestamp, True)
 
     def get_structure_summary(self):
         return self.__event_name

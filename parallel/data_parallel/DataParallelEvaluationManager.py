@@ -7,6 +7,7 @@ from evaluation.EvaluationMechanismFactory import EvaluationMechanismParameters
 from base.DataFormatter import DataFormatter
 from parallel.ParallelExecutionParameters import *
 from stream.Stream import *
+from tree.PatternMatchStorage import TreeStorageParameters
 
 
 class DataParallelEvaluationManager(ParallelEvaluationManager, ABC):
@@ -15,13 +16,14 @@ class DataParallelEvaluationManager(ParallelEvaluationManager, ABC):
     """
     def __init__(self, patterns: Pattern or List[Pattern],
                  eval_mechanism_params: EvaluationMechanismParameters,
-                 parallel_execution_params: DataParallelExecutionParameters):
+                 parallel_execution_params: DataParallelExecutionParameters,
+                 storage_params: TreeStorageParameters):
         super().__init__(parallel_execution_params)
         self.__mode = parallel_execution_params.algorithm
         self.__num_units = parallel_execution_params.units_number
         self.__algorithm = \
             DataParallelExecutionAlgorithmFactory.create_data_parallel_algorithm(
-                parallel_execution_params, patterns, eval_mechanism_params, self._platform)
+                parallel_execution_params, patterns, eval_mechanism_params, self._platform, storage_params)
         self.__pattern_matches = None
 
     def eval(self, events: InputStream, matches: OutputStream, data_formatter: DataFormatter):

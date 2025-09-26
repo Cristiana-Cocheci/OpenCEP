@@ -52,10 +52,14 @@ class EvaluationMechanismFactory:
     """
     @staticmethod
     def build_eval_mechanism(eval_mechanism_params: EvaluationMechanismParameters,
-                             patterns: Pattern or List[Pattern]):
+                             patterns: Pattern or List[Pattern], storage_params: TreeStorageParameters):
+        # initialize with default parameters if none are given
         if eval_mechanism_params is None:
-            eval_mechanism_params = EvaluationMechanismFactory.__create_default_eval_parameters()
+            eval_mechanism_params = EvaluationMechanismFactory.__create_default_eval_parameters(storage_params)
+        # create the requested evaluation mechanism
         if eval_mechanism_params.type == EvaluationMechanismTypes.TREE_BASED:
+            default_storage_params = TreeStorageParameters() if storage_params is None else storage_params
+            eval_mechanism_params.storage_params = default_storage_params
             return EvaluationMechanismFactory.__create_tree_based_eval_mechanism(eval_mechanism_params, patterns)
         raise Exception("Unknown evaluation mechanism type: %s" % (eval_mechanism_params.type,))
 
@@ -67,6 +71,7 @@ class EvaluationMechanismFactory:
         As of this version, adaptivity only works with single-pattern CEP. It is the responsibility of the user to
         disable adaptivity in the multi-pattern mode.
         """
+        print("!!! Creating tree-based evaluation mechanism...")
         if isinstance(patterns, Pattern):
             patterns = [patterns]
 
@@ -107,12 +112,13 @@ class EvaluationMechanismFactory:
         raise Exception("Unsupported multi-pattern merge algorithm %s" % (tree_plan_merge_approach,))
 
     @staticmethod
-    def __create_default_eval_parameters():
+    def __create_default_eval_parameters(storage_params: TreeStorageParameters):
         """
         Uses the default configuration to create evaluation mechanism parameters.
         """
+        print("!!! Using default evaluation mechanism parameters...")
         if DefaultConfig.DEFAULT_EVALUATION_MECHANISM_TYPE == EvaluationMechanismTypes.TREE_BASED:
-            return TreeBasedEvaluationMechanismParameters()
+            return TreeBasedEvaluationMechanismParameters(storage_params=storage_params)
         raise Exception("Unknown evaluation mechanism type: %s" % (DefaultConfig.DEFAULT_EVALUATION_MECHANISM_TYPE,))
 
     @staticmethod

@@ -1,0 +1,3 @@
+{'tripduration': '643', 'starttime': 2019-01-01 00:24:10.907000, 'stoptime': 2019-01-01 00:34:54.295000, 'startstationid': '484.0', 'startstationname': 'W 44 St & 5 Ave', 'endstationid': '484.0', 'endstationname': 'W 44 St & 5 Ave', 'bike_id': '34089'}
+{'tripduration': '643', 'starttime': 2019-01-01 00:24:10.907000, 'stoptime': 2019-01-01 00:34:54.295000, 'startstationid': '484.0', 'startstationname': 'W 44 St & 5 Ave', 'endstationid': '484.0', 'endstationname': 'W 44 St & 5 Ave', 'bike_id': '34089'}
+
