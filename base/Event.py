@@ -1,6 +1,7 @@
 from typing import List
 
 from base.DataFormatter import DataFormatter
+import datetime
 
 
 class Event:
@@ -22,6 +23,7 @@ class Event:
         self.min_timestamp = self.max_timestamp = self.timestamp = data_formatter.get_event_timestamp(self.payload)
         self.payload[Event.INDEX_ATTRIBUTE_NAME] = Event.counter
         self.probability = data_formatter.get_probability(self.payload)
+        self.input_timestamp = datetime.datetime.now()
         if self.probability is not None and (self.probability < 0.0 or self.probability > 1.0):
             raise Exception("Invalid value for probability:%s" % (self.probability,))
         Event.counter += 1
@@ -59,6 +61,7 @@ class AggregatedEvent(Event):
         # we assume the events to be sorted in ascending order of arrival
         self.min_timestamp = self.timestamp = None if len(events) == 0 else events[0].timestamp
         self.max_timestamp = None if len(events) == 0 else events[-1].timestamp
+        self.input_timestamp = datetime.datetime.now()
 
-    def __repr__(self):
+    def __repr__(self): #we modif this to chnage the file output stores matches
         return "\n".join([str(e) for e in self.primitive_events])
