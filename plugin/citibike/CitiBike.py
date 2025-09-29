@@ -75,9 +75,8 @@ class CitiBikeDataFormatter(DataFormatter):
 
 
         Example: 320,2019-01-01 00:01:47.4010,2019-01-01 00:07:07.5810,3160.0,Central Park West & W 76 St,3283.0,W 89 St & Columbus Ave,15839
-
-
         """
+        print(f"Parsing raw data: {raw_data}")
         event_attributes = raw_data.replace("\n", "").replace("\r", "").split(",")
         if len(event_attributes) != len(CITIBIKE_COLUMN_KEYS):
             raise ValueError(f"Malformed event: {raw_data} (expected {len(CITIBIKE_COLUMN_KEYS)} fields, got {len(event_attributes)})")

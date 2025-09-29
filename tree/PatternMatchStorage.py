@@ -201,7 +201,7 @@ class SortedPatternMatchStorage(PatternMatchStorage):
         Efficiently inserts the new pattern match to the storage according to its key.
         """
         self._access_count += 1
-        print(f"SortedPatternMatchStorage.add() called Key: {self._get_key(pm)}, Total matches: {len(self._partial_matches)}")
+        print(f"SortedPatternMatchStorage.add() called Key: {self._get_key(pm)}, length of partial matches: {len(self._partial_matches)}")
         print(f"Current events in pattern match: {[event for event in pm.events]}")
         
         # Check if load shedding should be applied

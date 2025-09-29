@@ -1,0 +1,6 @@
+{'tripduration': '316', 'starttime': 2019-01-01 00:04:43.736000, 'stoptime': 2019-01-01 00:10:00.608000, 'startstationid': '519', 'endstationid': '518', 'bikeid': '32723'}
+{'tripduration': '643', 'starttime': 2019-01-01 00:24:10.907000, 'stoptime': 2019-01-01 00:34:54.295000, 'startstationid': '492', 'endstationid': '484', 'bikeid': '32723'}
+
+{'tripduration': '467', 'starttime': 2019-01-01 00:16:22.948000, 'stoptime': 2019-01-01 00:24:10.543000, 'startstationid': '518', 'endstationid': '492', 'bikeid': '32723'}
+{'tripduration': '643', 'starttime': 2019-01-01 00:24:10.907000, 'stoptime': 2019-01-01 00:34:54.295000, 'startstationid': '492', 'endstationid': '484', 'bikeid': '32723'}
+

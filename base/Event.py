@@ -1,5 +1,5 @@
 from typing import List
-
+import pandas as pd
 from base.DataFormatter import DataFormatter
 
 
@@ -16,7 +16,7 @@ class Event:
     INDEX_ATTRIBUTE_NAME = "InternalIndexAttributeName"
     HIDDEN_ATTRIBUTE_NAMES = [INDEX_ATTRIBUTE_NAME]
 
-    def __init__(self, raw_data: str, data_formatter: DataFormatter):
+    def __init__(self, raw_data: str | dict | pd.Series, data_formatter: DataFormatter):
         self.payload = data_formatter.parse_event(raw_data)
         self.type = data_formatter.get_event_type(self.payload)
         self.min_timestamp = self.max_timestamp = self.timestamp = data_formatter.get_event_timestamp(self.payload)

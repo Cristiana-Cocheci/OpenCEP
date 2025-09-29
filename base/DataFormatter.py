@@ -23,7 +23,7 @@ class DataFormatter(ABC):
     def __init__(self, event_type_classifier: EventTypeClassifier):
         self.__event_type_classifier = event_type_classifier
 
-    def parse_event(self, raw_data: str):
+    def parse_event(self, raw_data: str | dict):
         """
         Transforms a raw data object representing a single event into a dictionary of objects, each corresponding
         to a single event attribute.

@@ -1,7 +1,3 @@
-{'tripduration': '316', 'starttime': 2019-01-01 00:04:43.736000, 'stoptime': 2019-01-01 00:10:00.608000, 'startstationid': '519.0', 'startstationname': 'Pershing Square North', 'endstationid': '518.0', 'endstationname': 'E 39 St & 2 Ave', 'bike_id': '32723'}
-{'tripduration': '467', 'starttime': 2019-01-01 00:16:22.948000, 'stoptime': 2019-01-01 00:24:10.543000, 'startstationid': '518.0', 'startstationname': 'E 39 St & 2 Ave', 'endstationid': '492.0', 'endstationname': 'W 33 St & 7 Ave', 'bike_id': '32723'}
-{'tripduration': '643', 'starttime': 2019-01-01 00:24:10.907000, 'stoptime': 2019-01-01 00:34:54.295000, 'startstationid': '492', 'startstationname': 'W 44 St & 5 Ave', 'endstationid': '484.0', 'endstationname': 'W 33 St & 7 Ave', 'bike_id': '32723'}
-
 {'tripduration': '467', 'starttime': 2019-01-01 00:16:22.948000, 'stoptime': 2019-01-01 00:24:10.543000, 'startstationid': '518.0', 'startstationname': 'E 39 St & 2 Ave', 'endstationid': '492.0', 'endstationname': 'W 33 St & 7 Ave', 'bike_id': '32723'}
 {'tripduration': '643', 'starttime': 2019-01-01 00:24:10.907000, 'stoptime': 2019-01-01 00:34:54.295000, 'startstationid': '492', 'startstationname': 'W 44 St & 5 Ave', 'endstationid': '484.0', 'endstationname': 'W 33 St & 7 Ave', 'bike_id': '32723'}
 

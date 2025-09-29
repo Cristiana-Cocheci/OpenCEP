@@ -3,6 +3,7 @@ from typing import Dict
 from base.DataFormatter import DataFormatter
 from base.Event import Event
 from plan.TreePlan import TreePlan
+from stream.DataFrameStream import CitiBikeDataFrameInputStream
 from stream.Stream import InputStream, OutputStream
 from misc.Utils import *
 from tree.nodes.LeafNode import LeafNode
@@ -60,18 +61,40 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         self._event_types_listeners = self._register_event_listeners(self._tree)
         last_statistics_refresh_time = None
 
-        for raw_event in events:
-            event = Event(raw_event, data_formatter)
-            if event.type not in self._event_types_listeners:
-                continue
-            self.__remove_expired_freezers(event)
+        if isinstance(events, CitiBikeDataFrameInputStream):
+            print("Using optimized DataFrame input stream processing")
+            for _, row in events.dataframe.iterrows():
+                dict_event = row.to_dict()
+                print(f"Processing event in TreeBasedEvaluationMechanism: {dict_event}")
+                event = Event(dict_event, data_formatter)
 
-            if not self.__is_multi_pattern_mode and self.__statistics_collector is not None:
-                # TODO: support multi-pattern mode
-                last_statistics_refresh_time = self.__perform_reoptimization(last_statistics_refresh_time, event)
+                if event.type not in self._event_types_listeners:
+                    continue
+                self.__remove_expired_freezers(event)
 
-            self._play_new_event_on_tree(event, matches)
-            self._get_matches(matches)
+                if not self.__is_multi_pattern_mode and self.__statistics_collector is not None:
+                    # TODO: support multi-pattern mode
+                    last_statistics_refresh_time = self.__perform_reoptimization(last_statistics_refresh_time, event)
+
+                print(f"Playing new event on tree: {event}, trying to find matches")
+                self._play_new_event_on_tree(event, matches)
+                self._get_matches(matches)
+        else:
+            print("Using generic file input stream processing")
+
+            for raw_event in events:
+                event = Event(raw_event, data_formatter)
+                if event.type not in self._event_types_listeners:
+                    continue
+                self.__remove_expired_freezers(event)
+
+                if not self.__is_multi_pattern_mode and self.__statistics_collector is not None:
+                    # TODO: support multi-pattern mode
+                    last_statistics_refresh_time = self.__perform_reoptimization(last_statistics_refresh_time, event)
+
+                print(f"Playing new event on tree: {event}, trying to find matches")
+                self._play_new_event_on_tree(event, matches)
+                self._get_matches(matches)
 
         # Now that we finished the input stream, if there were some pending matches somewhere in the tree, we will
         # collect them now
@@ -109,12 +132,14 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         Collects the pending matches from the tree
         """
         for match in self._tree.get_last_matches():
+            print(f"Found pending match: {match}")
             matches.add_item(match)
 
     def _play_new_event(self, event: Event, event_types_listeners):
         """
         Lets the tree handle the event
         """
+        print(f"Playing new event. Event types listeners: {event_types_listeners}")
         for leaf in event_types_listeners[event.type]:
             if self._should_ignore_events_on_leaf(leaf, event_types_listeners):
                 continue
@@ -126,6 +151,7 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         Collects the ready matches from the tree and adds them to the evaluation matches.
         """
         for match in self._tree.get_matches():
+            print(f"Found match: {match}")
             matches.add_item(match)
             self._remove_matched_freezers(match.events)
 

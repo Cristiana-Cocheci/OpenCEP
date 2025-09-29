@@ -45,6 +45,7 @@ class CEP:
         Applies the evaluation mechanism to detect the predefined patterns in a given stream of events.
         Returns the total time elapsed during evaluation.
         """
+        print("Starting CEP evaluation...")
         start = datetime.now()
         self.__evaluation_manager.eval(events, matches, data_formatter)
         return (datetime.now() - start).total_seconds()
