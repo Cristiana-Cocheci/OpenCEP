@@ -39,6 +39,7 @@ class Tree:
         self.__apply_condition(pattern)
 
         self.__root.set_is_output_node(True)
+        print(f"Tree calling create_storage_unit with storage_params: {storage_params}")
         self.__root.create_storage_unit(storage_params)
 
         self.__root.create_parent_to_info_dict()

@@ -4,6 +4,7 @@ from evaluation.EvaluationMechanismFactory import EvaluationMechanismParameters
 from base.DataFormatter import DataFormatter
 from base.PatternMatch import *
 from parallel.platform.ParallelExecutionPlatform import ParallelExecutionPlatform, Lock
+from stream.DataFrameStream import CitiBikeDataFrameInputStream
 from stream.Stream import *
 from parallel.manager.EvaluationManager import EvaluationManager
 from parallel.manager.SequentialEvaluationManager import SequentialEvaluationManager
@@ -42,11 +43,20 @@ class DataParallelExecutionAlgorithm(ABC):
             execution_unit.start()
             execution_units.append(execution_unit)
 
-        # iterate over all events
-        for raw_event in events:
-            event = Event(raw_event, data_formatter)
-            for unit_id in self._classifier(event):
-                execution_units[unit_id].add_event(raw_event)
+        if isinstance(events, CitiBikeDataFrameInputStream):
+            print("Using optimized DataFrame input stream processing")
+            for _, row in events.dataframe.iterrows():
+                dict_event = row.to_dict()
+                event = Event(dict_event, data_formatter)
+                for unit_id in self._classifier(event):
+                    execution_units[unit_id].add_event(dict_event)
+        else:
+            print("Using generic file input stream processing")
+            # iterate over all events
+            for raw_event in events:
+                event = Event(raw_event, data_formatter)
+                for unit_id in self._classifier(event):
+                    execution_units[unit_id].add_event(raw_event)
 
         # waits for all execution_units to terminate
         for execution_unit in execution_units:

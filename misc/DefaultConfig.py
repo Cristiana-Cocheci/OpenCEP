@@ -34,6 +34,10 @@ SECONDARY_SELECTION_STRATEGY = SelectionStrategies.MATCH_SINGLE
 SHOULD_SORT_STORAGE = False
 CLEANUP_INTERVAL = 10  # the default number of pattern match additions between subsequent storage cleanups
 PRIORITIZE_SORTING_BY_TIMESTAMP = True
+ENABLE_LOAD_SHEDDING = False
+LOAD_SHEDDING_THRESHOLD = 1000  # the default number of stored pattern matches to trigger load shedding
+LOAD_SHEDDING_DROP_RATE = 0.1  # the default percentage of matches to drop during load shedding
+LOAD_SHEDDING_STRATEGY = 'random'  
 
 # iterative improvement defaults
 ITERATIVE_IMPROVEMENT_TYPE = IterativeImprovementType.SWAP_BASED
