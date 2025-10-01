@@ -15,6 +15,7 @@ class PatternMatch:
         # this field is only used for full pattern matches
         self.pattern_ids = []
         self.probability = probability
+        self.t_emit = None
 
     def __eq__(self, other):
         return isinstance(other, PatternMatch) and set(self.events) == set(other.events) and \

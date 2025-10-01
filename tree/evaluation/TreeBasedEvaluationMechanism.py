@@ -15,8 +15,9 @@ from adaptive.statistics import StatisticsCollector
 from tree.Tree import Tree
 from datetime import timedelta
 from adaptive.optimizer import Optimizer
+import numpy as np
 
-
+#they automatically use trivialtree which inherits this one
 class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
     """
     An implementation of the tree-based evaluation mechanism.
@@ -42,6 +43,7 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
 
         self._event_types_listeners = {}
         self.__statistics_update_time_window = statistics_update_time_window
+        self.latency_values = []
 
         # The remainder of the initialization process is only relevant for the freeze map feature. This feature can
         # only be enabled in single-pattern mode.
@@ -99,6 +101,13 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         # Now that we finished the input stream, if there were some pending matches somewhere in the tree, we will
         # collect them now
         self._get_last_pending_matches(matches)
+        #trying to print latency ADD
+        if len(self.latency_values)>0:
+            median_latency = np.median(self.latency_values)
+            p95_latency = np.percentile(self.latency_values, 95)
+            print(f"median latency: {median_latency:.4f}")
+            print(f"p95 latency: {p95_latency:.4f}")
+        
         matches.close()
 
     def __perform_reoptimization(self, last_statistics_refresh_time: timedelta, last_event: Event):
@@ -151,7 +160,17 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         Collects the ready matches from the tree and adds them to the evaluation matches.
         """
         for match in self._tree.get_matches():
+
             print(f"Found match: {match}")
+
+            match.t_emit = datetime.now()
+            
+            #print(f"match{match}") ADD
+            #print(f"match events \n" {match.events})
+            t_last = max(e.input_timestamp for e in match.events)
+            latency = (match.t_emit - t_last).total_seconds()
+            self.latency_values.append(latency)
+
             matches.add_item(match)
             self._remove_matched_freezers(match.events)
 

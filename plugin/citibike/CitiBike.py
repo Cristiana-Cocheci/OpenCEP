@@ -93,6 +93,6 @@ class CitiBikeDataFormatter(DataFormatter):
 
     def get_event_timestamp(self, event_payload: dict):
         """
-        The event timestamp uses the start time of the trip.
+        The event timestamp uses the start time of the trip. it sets min and max_time in event.py consequently in the rets of teh file
         """
         return event_payload[CITIBIKE_START_TIME_KEY]
