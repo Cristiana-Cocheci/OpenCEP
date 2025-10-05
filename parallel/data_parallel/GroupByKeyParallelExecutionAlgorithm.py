@@ -6,6 +6,8 @@ from parallel.platform.ParallelExecutionPlatform import ParallelExecutionPlatfor
 from misc.Utils import is_int, is_float
 from typing import Set
 
+from tree.PatternMatchStorage import TreeStorageParameters
+
 
 class GroupByKeyParallelExecutionAlgorithm(DataParallelExecutionAlgorithm):
     """
@@ -24,7 +26,7 @@ class GroupByKeyParallelExecutionAlgorithm(DataParallelExecutionAlgorithm):
                  patterns: Pattern or List[Pattern],
                  eval_mechanism_params: EvaluationMechanismParameters,
                  platform: ParallelExecutionPlatform,
-                 key: str):
+                 key: str,storage_params: TreeStorageParameters = None):
         super().__init__(units_number, patterns, eval_mechanism_params, platform)
         self._key = key
 

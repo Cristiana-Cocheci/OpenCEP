@@ -10,6 +10,8 @@ from parallel.manager.EvaluationManager import EvaluationManager
 from parallel.manager.SequentialEvaluationManager import SequentialEvaluationManager
 from typing import Set, Callable
 
+from tree.PatternMatchStorage import TreeStorageParameters
+
 
 class DataParallelExecutionAlgorithm(ABC):
     """
@@ -17,7 +19,7 @@ class DataParallelExecutionAlgorithm(ABC):
     """
 
     def __init__(self, units_number, patterns: Pattern or List[Pattern],
-                 eval_mechanism_params: EvaluationMechanismParameters, platform: ParallelExecutionPlatform):
+                 eval_mechanism_params: EvaluationMechanismParameters, platform: ParallelExecutionPlatform,storage_params: TreeStorageParameters = None):
         self.units_number = units_number
         self.platform = platform
         # create SequentialEvaluationManager for every unit

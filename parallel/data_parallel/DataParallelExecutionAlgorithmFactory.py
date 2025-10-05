@@ -4,6 +4,7 @@ from parallel.ParallelExecutionParameters import *
 from parallel.data_parallel.DataParallelExecutionAlgorithm import *
 from parallel.data_parallel.RIPParallelExecutionAlgorithm import RIPParallelExecutionAlgorithm
 from parallel.platform.ParallelExecutionPlatform import ParallelExecutionPlatform
+from tree.PatternMatchStorage import TreeStorageParameters
 
 
 class DataParallelExecutionAlgorithmFactory:
@@ -15,7 +16,7 @@ class DataParallelExecutionAlgorithmFactory:
                                        patterns: Pattern or List[Pattern],
                                        eval_mechanism_params: EvaluationMechanismParameters,
                                        platform: ParallelExecutionPlatform,
-                                       storage_params):
+                                       storage_params: TreeStorageParameters = None):
         if data_parallel_params.algorithm == DataParallelExecutionModes.GROUP_BY_KEY_ALGORITHM:
             return GroupByKeyParallelExecutionAlgorithm(data_parallel_params.units_number,
                                                         patterns, eval_mechanism_params,

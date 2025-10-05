@@ -20,7 +20,7 @@ class SequentialEvaluationManager(EvaluationManager):
     Initializes a single evaluation mechanism and delegates to it the entire workload.
     """
     def __init__(self, patterns: Pattern or List[Pattern], eval_mechanism_params: EvaluationMechanismParameters, 
-                 storage_params: TreeStorageParameters):
+                 storage_params: TreeStorageParameters=None):
         if isinstance(patterns, Pattern):
             patterns = [patterns]
         self.__eval_mechanism = EvaluationMechanismFactory.build_eval_mechanism(eval_mechanism_params, patterns, storage_params)
