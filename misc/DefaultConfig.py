@@ -38,6 +38,7 @@ ENABLE_LOAD_SHEDDING = False
 LOAD_SHEDDING_THRESHOLD = 1000  # the default number of stored pattern matches to trigger load shedding
 LOAD_SHEDDING_DROP_RATE = 0.1  # the default percentage of matches to drop during load shedding
 LOAD_SHEDDING_STRATEGY = 'random'  
+RECENT_LATENCIES_INTERVAL=9000
 
 # iterative improvement defaults
 ITERATIVE_IMPROVEMENT_TYPE = IterativeImprovementType.SWAP_BASED

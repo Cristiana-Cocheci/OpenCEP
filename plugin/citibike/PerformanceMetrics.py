@@ -5,11 +5,13 @@ import psutil
 from collections import deque
 import time
 
+from misc import DefaultConfig
+
 class PerformanceMetrics:
-    def __init__(self,recent_latencies_bound=9000):
+    def __init__(self,recent_latencies_interval=DefaultConfig.RECENT_LATENCIES_INTERVAL):
         self.lock = Lock()
         self.latencies = []
-        self.recent_latencies=deque(maxlen=recent_latencies_bound)
+        self.recent_latencies=deque(maxlen=recent_latencies_interval)
         self.starttime= None
         self.endtime= None
         self.event_count=0

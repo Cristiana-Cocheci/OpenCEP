@@ -57,6 +57,9 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         self.__active_freezers = []
         with TreeBasedEvaluationMechanism._lock:
             self.evaluation_metrics = TreeBasedEvaluationMechanism._shared_metrics
+        if storage_params and storage_params.get_current_latency is None:
+            storage_params.get_current_latency = self.evaluation_metrics.current_latency
+
 
         if not self.__is_multi_pattern_mode and self._pattern.consumption_policy is not None and \
                 self._pattern.consumption_policy.freeze_names is not None:
