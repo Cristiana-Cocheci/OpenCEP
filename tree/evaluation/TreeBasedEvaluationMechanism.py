@@ -121,6 +121,7 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
             print("rrr")
             print(f"p95 latency: {self.evaluation_metrics.baseline_latency():.4f}")
             print(f"throughput: {self.evaluation_metrics.baseline_throughput()}")
+            print(f"latencies: {self.evaluation_metrics.latencies}")
         
 
 
