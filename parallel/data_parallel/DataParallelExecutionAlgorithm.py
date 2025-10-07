@@ -23,7 +23,7 @@ class DataParallelExecutionAlgorithm(ABC):
         self.units_number = units_number
         self.platform = platform
         # create SequentialEvaluationManager for every unit
-        print("we are in dataparallel exec algo")
+        # print("we are in dataparallel exec algo")
         self.evaluation_managers = [SequentialEvaluationManager(patterns, eval_mechanism_params,storage_params)
                                     for _ in range(self.units_number)]
         self.match_lock = platform.create_lock()

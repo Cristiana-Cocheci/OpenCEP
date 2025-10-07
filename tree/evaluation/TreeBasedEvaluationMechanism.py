@@ -88,12 +88,12 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
                     # TODO: support multi-pattern mode
                     last_statistics_refresh_time = self.__perform_reoptimization(last_statistics_refresh_time, event)
 
-                print(f"Playing new event on tree: {event}, trying to find matches")
+                # print(f"Playing new event on tree: {event}, trying to find matches")
                 self.evaluation_metrics.update_matches()
                 self._play_new_event_on_tree(event, matches)
                 self._get_matches(matches)
         else:
-            print("Using generic file input stream processing")
+            # print("Using generic file input stream processing")
 
             for raw_event in events:
                 event = Event(raw_event, data_formatter)
@@ -116,9 +116,9 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         matches.close()
 
         t=self.evaluation_metrics.remove_unit()
-        print("3yit",t)
+        # print("3yit",t)
         if t:
-            print("rrr")
+            # print("rrr")
             print(f"p95 latency: {self.evaluation_metrics.baseline_latency():.4f}")
             print(f"throughput: {self.evaluation_metrics.baseline_throughput()}")
             print(f"latencies: {self.evaluation_metrics.latencies}")
@@ -156,14 +156,14 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         Collects the pending matches from the tree
         """
         for match in self._tree.get_last_matches():
-            print(f"Found pending match: {match}")
+            # print(f"Found pending match: {match}")
             matches.add_item(match)
 
     def _play_new_event(self, event: Event, event_types_listeners):
         """
         Lets the tree handle the event
         """
-        print(f"Playing new event. Event types listeners: {event_types_listeners}")
+        # print(f"Playing new event. Event types listeners: {event_types_listeners}")
         for leaf in event_types_listeners[event.type]:
             if self._should_ignore_events_on_leaf(leaf, event_types_listeners):
                 continue

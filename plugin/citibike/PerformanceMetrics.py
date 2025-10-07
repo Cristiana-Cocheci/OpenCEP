@@ -19,13 +19,13 @@ class PerformanceMetrics:
 
     def add_unit(self):
         with self.lock:
-            print("zad unit")
+            # print("zad unit")
             self.units+=1
             if self.starttime== None:
                 self.starttime=time.perf_counter()
-                print("starttime",self.starttime)
+                # print("starttime",self.starttime)
     def remove_unit(self):
-        print("remove unit")
+        # print("remove unit")
         with self.lock:
             self.units-=1
             return self.units ==0
@@ -42,14 +42,14 @@ class PerformanceMetrics:
     
     def current_latency(self):
         with self.lock:
-            print("current latency")
+            # print("current latency")
             if self.recent_latencies:
                 return float(np.percentile(self.recent_latencies, 95))
             return None
         
     def baseline_latency(self):
             with self.lock:
-                print("baseline latency")
+                # print("baseline latency")
 
                 if self.latencies:
                     return float(np.percentile(self.latencies, 95))
@@ -57,7 +57,7 @@ class PerformanceMetrics:
     
     def baseline_throughput(self):
         with self.lock:
-                print("baseline throughput")
+                # print("baseline throughput")
                 if self.starttime:
                     print("event count",self.event_count,time.perf_counter())
                     return self.event_count / max(time.perf_counter() - self.starttime, 1e-9)

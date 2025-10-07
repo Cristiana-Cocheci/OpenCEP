@@ -214,14 +214,15 @@ class SortedPatternMatchStorage(PatternMatchStorage):
                 self._storage_params.load_shedding_drop_rate,
                 self._storage_params.load_shedding_strategy
             )'''
-        print("we are in add")
+        # print("we are in add")
         if (self._storage_params and 
-            self._storage_params.enable_load_shedding and self._storage_params.get_current_latency and self._storage_params.latency_bound is not None):
+            self._storage_params.enable_load_shedding and self._storage_params.get_current_latency and self._storage_params.latency_bound is not None 
+            or len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
             curr_latency=self._storage_params.get_current_latency()
             print("curr latency inside add is",curr_latency)
             if( curr_latency is not None):
                 if (curr_latency >= self._storage_params.latency_bound):
-                    print("we met the latency bound so we are going into load shedding")
+                    # print("we met the latency bound so we are going into load shedding")
                     self.apply_load_shedding(
                         self._storage_params.load_shedding_drop_rate,
                         self._storage_params.load_shedding_strategy
@@ -366,27 +367,28 @@ class UnsortedPatternMatchStorage(PatternMatchStorage):
         print(f"UnsortedPatternMatchStorage.add() called! Total matches: {len(self._partial_matches)}")
         
         # Check if load shedding should be applied
-        if (self._storage_params and 
-            self._storage_params.enable_load_shedding and
-            len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
-            print("Applying load shedding")
-            self.apply_load_shedding(
-                self._storage_params.load_shedding_drop_rate,
-                self._storage_params.load_shedding_strategy
-            )
-        # print("into unsorted add")
         # if (self._storage_params and 
-        #     self._storage_params.enable_load_shedding and self._storage_params.get_current_latency and self._storage_params.latency_bound is not None):
-        #     curr_latency=self._storage_params.get_current_latency()
-        #     print(f"computed currlat {curr_latency}")
-        #     if( curr_latency is not None):
-        #         print("comp latency not none")
-        #         if (curr_latency >= self._storage_params.latency_bound):
-        #             print("inside latency computation")
-        #             self.apply_load_shedding(
-        #                 self._storage_params.load_shedding_drop_rate,
-        #                 self._storage_params.load_shedding_strategy
-        #             )
+        #     self._storage_params.enable_load_shedding and
+        #     len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
+        #     print("Applying load shedding")
+        #     self.apply_load_shedding(
+        #         self._storage_params.load_shedding_drop_rate,
+        #         self._storage_params.load_shedding_strategy
+        #     )
+        # print("into unsorted add")
+        if ((self._storage_params and 
+            self._storage_params.enable_load_shedding and self._storage_params.get_current_latency and self._storage_params.latency_bound is not None)
+            or len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
+            curr_latency=self._storage_params.get_current_latency()
+            print(f"computed currlat {curr_latency}")
+            if( curr_latency is not None):
+                print("comp latency not none")
+                if (curr_latency >= self._storage_params.latency_bound):
+                    print("inside latency computation")
+                    self.apply_load_shedding(
+                        self._storage_params.load_shedding_drop_rate,
+                        self._storage_params.load_shedding_strategy
+                    )
         
         self._partial_matches.append(pm)
 
