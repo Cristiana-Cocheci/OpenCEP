@@ -37,7 +37,8 @@ class PerformanceMetrics:
 
     def update_matches(self):
         with self.lock:
-            print("we are updating event count",self.event_count)
+            if(self.event_count % 1000 == 0):
+                print("we are updating event count",self.event_count)
             self.event_count+=1
     
     def current_latency(self):

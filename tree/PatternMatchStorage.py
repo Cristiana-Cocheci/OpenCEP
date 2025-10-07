@@ -105,7 +105,7 @@ class PatternMatchStorage:
             drop_percentage: Percentage of matches to drop 
             strategy: Load shedding strategy ('random', 'oldest', 'newest', 'lowest_priority')
         """
-        print(f"Applying load shedding: {drop_percentage*100:.1f}% using '{strategy}' strategy")
+        # print(f"Applying load shedding: {drop_percentage*100:.1f}% using '{strategy}' strategy")
         if not (0.0 <= drop_percentage <= 1.0):
             raise ValueError("Drop percentage must be between 0.0 and 1.0")
         
@@ -202,7 +202,7 @@ class SortedPatternMatchStorage(PatternMatchStorage):
         Efficiently inserts the new pattern match to the storage according to its key.
         """
         self._access_count += 1
-        print(f"SortedPatternMatchStorage.add() called Key: {self._get_key(pm)}, length of partial matches: {len(self._partial_matches)}")
+        # print(f"SortedPatternMatchStorage.add() called Key: {self._get_key(pm)}, length of partial matches: {len(self._partial_matches)}")
         # print(f"Current events in pattern match: {[event for event in pm.events]}")
         
         # Check if load shedding should be applied
@@ -219,7 +219,7 @@ class SortedPatternMatchStorage(PatternMatchStorage):
             self._storage_params.enable_load_shedding and self._storage_params.get_current_latency and self._storage_params.latency_bound is not None 
             or len(self._partial_matches) >= self._storage_params.load_shedding_threshold):
             curr_latency=self._storage_params.get_current_latency()
-            print("curr latency inside add is",curr_latency)
+            # print("curr latency inside add is",curr_latency)
             if( curr_latency is not None):
                 if (curr_latency >= self._storage_params.latency_bound):
                     # print("we met the latency bound so we are going into load shedding")
@@ -382,9 +382,9 @@ class UnsortedPatternMatchStorage(PatternMatchStorage):
             curr_latency=self._storage_params.get_current_latency()
             print(f"computed currlat {curr_latency}")
             if( curr_latency is not None):
-                print("comp latency not none")
+                # print("comp latency not none")
                 if (curr_latency >= self._storage_params.latency_bound):
-                    print("inside latency computation")
+                    # print("inside latency computation")
                     self.apply_load_shedding(
                         self._storage_params.load_shedding_drop_rate,
                         self._storage_params.load_shedding_strategy

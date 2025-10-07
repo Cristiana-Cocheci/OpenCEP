@@ -19,7 +19,7 @@ class FileOutputStream(OutputStream):
     """
     Writes the objects into a predefined output file.
     """
-    def __init__(self, base_path: str, file_name: str, is_async: bool = False):
+    def __init__(self, base_path: str, file_name: str, is_async: bool = True):
         super().__init__()
         if not os.path.exists(base_path):
             os.makedirs(base_path, exist_ok=True)
@@ -35,7 +35,7 @@ class FileOutputStream(OutputStream):
         Depending on the settings, either writes the item to the file immediately or buffers it for future write.
         """
         if self.__is_async:
-            self.__output_file.write(str(item))
+            self.__output_file.write(item.pretty_print())
         else:
             super().add_item(item)
 
@@ -47,5 +47,5 @@ class FileOutputStream(OutputStream):
         if not self.__is_async:
             self.__output_file = open(self.__output_path, 'w')
             for item in self:
-                self.__output_file.write(str(item))
+                self.__output_file.write(item.pretty_print())
         self.__output_file.close()

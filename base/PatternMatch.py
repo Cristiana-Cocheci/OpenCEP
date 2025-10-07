@@ -35,6 +35,48 @@ class PatternMatch:
                 result += match
                 result += "\n"
         return result
+    
+    def pretty_print(self):
+        # Bike ID: 34051, Path: [967250, 967257]
+
+        def _get_attr_from_event(ev, key):
+            # ev may be an Event or AggregatedEvent
+            try:
+                if hasattr(ev, "payload") and key in ev.payload:
+                    return ev.payload.get(key)
+            except Exception:
+                pass
+
+            # events from a Kleene closure are aggregated events
+            if hasattr(ev, "primitive_events"):
+                for pe in ev.primitive_events:
+                    try:
+                        if hasattr(pe, "payload") and key in pe.payload:
+                            return pe.payload.get(key)
+                    except Exception:
+                        continue
+            return None
+
+        bike_id = _get_attr_from_event(self.events[0], "bikeid")
+
+        path = []
+        for ev in self.events:
+            if hasattr(ev, "primitive_events"):
+                for pe in ev.primitive_events:
+                    if hasattr(pe, "payload"):
+                        eid = pe.payload.get("eventid")
+                        if eid is None:
+                            eid = pe.payload.get(Event.INDEX_ATTRIBUTE_NAME)
+                        path.append(eid)
+            else:
+                if hasattr(ev, "payload"):
+                    eid = ev.payload.get("eventid")
+                    if eid is None:
+                        eid = ev.payload.get(Event.INDEX_ATTRIBUTE_NAME)
+                    path.append(eid)
+
+        formatted_item = f"Bike ID: {bike_id}, Path: {str(path)}\n"
+        return formatted_item
 
     def add_pattern_id(self, pattern_id: int):
         """

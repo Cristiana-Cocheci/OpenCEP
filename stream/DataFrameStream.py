@@ -7,7 +7,7 @@ from stream.Stream import InputStream
 def citibike_preprocessor(dataframe: pd.DataFrame):
     result = dataframe.copy()  
     CITIBIKE_COLUMNS = [
-            'tripduration', 'starttime', 'stoptime', 'startstationid', 'endstationid', 'bikeid'
+            'tripduration', 'starttime', 'stoptime', 'startstationid', 'endstationid', 'bikeid', 'eventid'
     ]
     result = result[CITIBIKE_COLUMNS]
     timestamp_format = "%Y-%m-%d %H:%M:%S.%f" 
@@ -48,7 +48,7 @@ class CitiBikeDataFrameInputStream(InputStream):
             self.dataframe = self.dataframe.sort_values(by=timestamp_column)
         
         #write processed dataframe to a new csv file for verification
-        self.dataframe.to_csv(filename, index=False)
+        # self.dataframe.to_csv(filename, index=False)
 
         for _, row in self.dataframe.iterrows():
             self._stream.put(row.to_dict())

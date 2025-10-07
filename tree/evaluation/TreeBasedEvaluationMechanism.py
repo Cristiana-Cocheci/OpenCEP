@@ -105,7 +105,7 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
                     # TODO: support multi-pattern mode
                     last_statistics_refresh_time = self.__perform_reoptimization(last_statistics_refresh_time, event)
 
-                print(f"Playing new event on tree: {event}, trying to find matches")
+                # print(f"Playing new event on tree: {event}, trying to find matches")
                 self.evaluation_metrics.update_matches()
                 self._play_new_event_on_tree(event, matches)
                 self._get_matches(matches)
