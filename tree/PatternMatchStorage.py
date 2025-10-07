@@ -214,6 +214,7 @@ class SortedPatternMatchStorage(PatternMatchStorage):
                 self._storage_params.load_shedding_strategy
             )"""
         print("we are in add")
+        print("manbkiwch",self._storage_params)
         if (self._storage_params and 
             self._storage_params.enable_load_shedding and self._storage_params.get_current_latency and self._storage_params.latency_bound is not None):
             curr_latency=self._storage_params.get_current_latency()

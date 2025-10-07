@@ -27,7 +27,7 @@ class GroupByKeyParallelExecutionAlgorithm(DataParallelExecutionAlgorithm):
                  eval_mechanism_params: EvaluationMechanismParameters,
                  platform: ParallelExecutionPlatform,
                  key: str,storage_params: TreeStorageParameters = None):
-        super().__init__(units_number, patterns, eval_mechanism_params, platform)
+        super().__init__(units_number, patterns, eval_mechanism_params, platform,storage_params)
         self._key = key
 
     def _classifier(self, event: Event) -> Set[int]:
