@@ -71,7 +71,7 @@ class EvaluationMechanismFactory:
         As of this version, adaptivity only works with single-pattern CEP. It is the responsibility of the user to
         disable adaptivity in the multi-pattern mode.
         """
-        print("!!! Creating tree-based evaluation mechanism...")
+        # print("!!! Creating tree-based evaluation mechanism...")
         if isinstance(patterns, Pattern):
             patterns = [patterns]
 
@@ -116,7 +116,7 @@ class EvaluationMechanismFactory:
         """
         Uses the default configuration to create evaluation mechanism parameters.
         """
-        print("!!! Using default evaluation mechanism parameters...")
+        # print("!!! Using default evaluation mechanism parameters...")
         if DefaultConfig.DEFAULT_EVALUATION_MECHANISM_TYPE == EvaluationMechanismTypes.TREE_BASED:
             return TreeBasedEvaluationMechanismParameters(storage_params=storage_params)
         raise Exception("Unknown evaluation mechanism type: %s" % (DefaultConfig.DEFAULT_EVALUATION_MECHANISM_TYPE,))

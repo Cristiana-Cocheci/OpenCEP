@@ -188,7 +188,7 @@ class SortedPatternMatchStorage(PatternMatchStorage):
         super().__init__(get_match_key, in_leaf and sort_by_first_timestamp, clean_up_interval)
         self.__get_function = self.__generate_get_function(rel_op, equation_side)
         self._storage_params = storage_params
-        print(f"SortedPatternMatchStorage created with storage_params: {storage_params}")
+        # print(f"SortedPatternMatchStorage created with storage_params: {storage_params}")
 
     def __contains__(self, item):
         """
@@ -357,14 +357,14 @@ class UnsortedPatternMatchStorage(PatternMatchStorage):
     def __init__(self, clean_up_interval: int, storage_params):
         super().__init__(lambda x: x, False, clean_up_interval)
         self._storage_params = storage_params
-        print(f"UnsortedPatternMatchStorage created with storage_params: {storage_params}")
+        # print(f"UnsortedPatternMatchStorage created with storage_params: {storage_params}")
 
     def add(self, pm: PatternMatch):
         """
         Appends the given pattern match to the match buffer.
         """
         self._access_count += 1
-        print(f"UnsortedPatternMatchStorage.add() called! Total matches: {len(self._partial_matches)}")
+        # print(f"UnsortedPatternMatchStorage.add() called! Total matches: {len(self._partial_matches)}")
         
         # Check if load shedding should be applied
         # if (self._storage_params and 

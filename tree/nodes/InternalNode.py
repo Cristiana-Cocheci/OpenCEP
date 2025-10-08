@@ -58,7 +58,7 @@ class InternalNode(Node, ABC):
         An auxiliary method for setting up the storage of an internal node.
         In the internal nodes, we only sort the storage if a storage key is explicitly provided by the user.
         """
-        print(f"InternalNode creating storage: sort={storage_params.sort_storage}, sorting_key={sorting_key}")
+        # print(f"InternalNode creating storage: sort={storage_params.sort_storage}, sorting_key={sorting_key}")
         if not storage_params.sort_storage or sorting_key is None:
             self._partial_matches = UnsortedPatternMatchStorage(storage_params.clean_up_interval, storage_params)
         else:

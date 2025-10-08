@@ -78,7 +78,7 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
             print("Using optimized DataFrame input stream processing")
             for _, row in events.dataframe.iterrows():
                 dict_event = row.to_dict()
-                print(f"Processing event in TreeBasedEvaluationMechanism: {dict_event}")
+                # print(f"Processing event in TreeBasedEvaluationMechanism: {dict_event}")
                 event = Event(dict_event, data_formatter)
                 if event.type not in self._event_types_listeners:
                     continue
