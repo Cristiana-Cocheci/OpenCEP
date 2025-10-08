@@ -115,13 +115,13 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         self._get_last_pending_matches(matches)
         matches.close()
 
-        t=self.evaluation_metrics.remove_unit()
-        # print("3yit",t)
-        if t:
+        # t=self.evaluation_metrics.remove_unit()
+        # # print("3yit",t)
+        # if t:
             # print("rrr")
-            print(f"p95 latency: {self.evaluation_metrics.baseline_latency():.4f}")
-            print(f"throughput: {self.evaluation_metrics.baseline_throughput()}")
-            print(f"latencies: {self.evaluation_metrics.latencies}")
+        print(f"p95 latency: {self.evaluation_metrics.baseline_latency():.4f}")
+        print(f"throughput: {self.evaluation_metrics.baseline_throughput()}")
+        print(f"latencies: {self.evaluation_metrics.latencies}")
         
 
 
