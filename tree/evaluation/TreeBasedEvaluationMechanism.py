@@ -186,6 +186,12 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
             latency = (match.t_emit - t_last).total_seconds()
             self.evaluation_metrics.update_latency(latency)
 
+            current_throughput = self.evaluation_metrics.baseline_throughput()
+
+            # add latency and throughput to match for logging
+            match.latency = latency
+            match.throughput = current_throughput
+
             matches.add_item(match)
             self._remove_matched_freezers(match.events)
 

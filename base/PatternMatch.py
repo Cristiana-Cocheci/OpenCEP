@@ -57,7 +57,12 @@ class PatternMatch:
                         continue
             return None
 
-        bike_id = _get_attr_from_event(self.events[0], "bikeid")
+        bike_id = _get_attr_from_event(self.events[0], "bikeid") if self.events else None
+        # latency and throughput are properties attached to the PatternMatch instance by the
+        # evaluation mechanism (see TreeBasedEvaluationMechanism._get_matches). They are not
+        # attributes of the internal events list, so access them on self with a safe fallback.
+        latency = getattr(self, "latency", None)
+        throughput = getattr(self, "throughput", None)
 
         path = []
         for ev in self.events:
@@ -75,7 +80,9 @@ class PatternMatch:
                         eid = ev.payload.get(Event.INDEX_ATTRIBUTE_NAME)
                     path.append(eid)
 
-        formatted_item = f"Bike ID: {bike_id}, Path: {str(path)}\n"
+        # formatted_item = f"Bike ID: {bike_id}, Path: {str(path)}\n"
+        formatted_item = f"Bike ID: {bike_id}, Path: {str(path)}, Latency: {latency}, Current Throughput: {throughput}\n"
+
         return formatted_item
 
     def add_pattern_id(self, pattern_id: int):
