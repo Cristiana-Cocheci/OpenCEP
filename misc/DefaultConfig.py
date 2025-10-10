@@ -34,10 +34,10 @@ SECONDARY_SELECTION_STRATEGY = SelectionStrategies.MATCH_SINGLE
 SHOULD_SORT_STORAGE = False
 CLEANUP_INTERVAL = 10  # the default number of pattern match additions between subsequent storage cleanups
 PRIORITIZE_SORTING_BY_TIMESTAMP = True
-ENABLE_LOAD_SHEDDING = False
-LOAD_SHEDDING_THRESHOLD = 1000  # the default number of stored pattern matches to trigger load shedding
+ENABLE_LOAD_SHEDDING = True
+LOAD_SHEDDING_THRESHOLD = 30  # the default number of stored pattern matches to trigger load shedding
 LOAD_SHEDDING_DROP_RATE = 0.1  # the default percentage of matches to drop during load shedding
-LOAD_SHEDDING_STRATEGY = 'random'  
+LOAD_SHEDDING_STRATEGY = 'oldest'  
 RECENT_LATENCIES_INTERVAL=1000
 
 # iterative improvement defaults
@@ -48,7 +48,7 @@ ITERATIVE_IMPROVEMENT_INIT_TYPE = IterativeImprovementInitType.RANDOM
 DEFAULT_PARALLEL_EXECUTION_MODE = ParallelExecutionModes.SEQUENTIAL
 DEFAULT_PARALLEL_EXECUTION_PLATFORM = ParallelExecutionPlatforms.THREADING
 DEFAULT_DATA_PARALLEL_ALGORITHM = DataParallelExecutionModes.RIP_ALGORITHM
-DEFAULT_PARALLEL_UNITS_NUMBER = 1
+DEFAULT_PARALLEL_UNITS_NUMBER = 12
 DEFAULT_PARALLEL_KEY = None
 DEFAULT_PARALLEL_ATTRIBUTES_DICT = None
 DEFAULT_PARALLEL_MULTIPLE = 12

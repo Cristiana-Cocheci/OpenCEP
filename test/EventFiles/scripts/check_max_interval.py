@@ -14,8 +14,9 @@ def get_paths(filename):
             paths.append((bike_id, path))
     return paths
 
-def check_max_interval(dataframe, paths):
+def check_max_interval(dataframe, paths, max_interval=31):
     time_intervals = []
+    number_with_subpaths = 0
     for _, path in paths:
         # print(path[0], path[-1])
         start_time = dataframe.iloc[path[0]]["starttime"]
@@ -23,11 +24,14 @@ def check_max_interval(dataframe, paths):
         start_time = pd.to_datetime(start_time)
         end_time = pd.to_datetime(end_time)
         interval = ((end_time - start_time).total_seconds() / 60)
-        time_intervals.append(interval)
-    print(time_intervals)
+        if interval <= max_interval:
+            time_intervals.append(interval)
+            number_with_subpaths += len(path)-1
+    print(len(time_intervals))
     print("Max interval (minutes):", max(time_intervals) if time_intervals else "No valid intervals found")
     print(mean(time_intervals) if time_intervals else "No valid intervals found")
     print(f"Median: {pd.Series(time_intervals).median() if time_intervals else 'No valid intervals found'}")
+    print(f"Number of subpaths: {number_with_subpaths}")
 
 paths = get_paths("/Users/cricoche/Desktop/aalto_master/SSDM/OpenCEP/OpenCEP/test/EventFiles/scripts/fabricated_paths.txt")
 print(paths)
