@@ -34,6 +34,11 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
                  optimizer: Optimizer = None,
                  statistics_update_time_window: timedelta = None):
         self.__is_multi_pattern_mode = len(pattern_to_tree_plan_map) > 1
+        self.unit_metrics = PerformanceMetrics()
+
+        if storage_params and storage_params.get_current_latency is None:
+                storage_params.get_current_latency = self.unit_metrics.current_latency
+
         if self.__is_multi_pattern_mode:
             # TODO: support statistic collection in the multi-pattern mode
             self._tree = MultiPatternTree(pattern_to_tree_plan_map, storage_params)
@@ -57,9 +62,6 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
         self.__active_freezers = []
         with TreeBasedEvaluationMechanism._lock:
             self.evaluation_metrics = TreeBasedEvaluationMechanism._shared_metrics
-        if storage_params and storage_params.get_current_latency is None:
-            storage_params.get_current_latency = self.evaluation_metrics.current_latency
-
 
         if not self.__is_multi_pattern_mode and self._pattern.consumption_policy is not None and \
                 self._pattern.consumption_policy.freeze_names is not None:
@@ -185,6 +187,8 @@ class TreeBasedEvaluationMechanism(EvaluationMechanism, ABC):
             t_last = max(e.input_timestamp for e in match.events)
             latency = (match.t_emit - t_last).total_seconds()
             self.evaluation_metrics.update_latency(latency)
+            self.unit_metrics.update_current_latency(latency)
+
 
             current_throughput = self.evaluation_metrics.baseline_throughput()
 

@@ -33,7 +33,6 @@ class PerformanceMetrics:
     def update_latency(self,latency):
         with self.lock:
             self.latencies.append(latency)
-            self.recent_latencies.append(latency)
 
     def update_matches(self):
         with self.lock:
@@ -41,13 +40,21 @@ class PerformanceMetrics:
                 print("we are updating event count",self.event_count)
             self.event_count+=1
     
+    def update_current_latency(self,latency):
+        with self.lock:
+            self.recent_latencies.append(latency)
+
+
     def current_latency(self):
         with self.lock:
             # print("current latency")
             if self.recent_latencies:
-                return float(max(self.recent_latencies))
-                # return float(np.percentile(self.recent_latencies, 95))
-            return None
+                #return float(max(self.recent_latencies))
+                return float(np.percentile(self.recent_latencies, 95))
+            if self.latencies:
+                return float(np.percentile(self.latencies, 95))
+        return 0
+        
         
     def baseline_latency(self):
             with self.lock:
